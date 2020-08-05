@@ -3,12 +3,8 @@ class ArtistsController < ApplicationController
     @artists = Artist.all
   end
 
-#update artist show view to list each song for that artist
-# GET links to artists songs path
-# GET artists id links artists song path 
   def show
-    @artist = Artist.find_by(id: params[:id])
-    raise ArtistNotFound if @artist.nil?
+    @artist = Artist.find(params[:id])
   end
 
   def new

@@ -1,27 +1,25 @@
 class SongsController < ApplicationController
-  before_action :set_artist, only: [:index, :show]
-
-# GET index redirects when artist is not found (else)
-    def index
-      if params[:artist_id]
-        @songs = @artist.songs
+  def index
+    if params[:artist_id]
+      if Artist.find_by(id: params[:artist_id])
+        @songs = Artist.find(params[:artist_id]).songs
       else
-        @songs = Song.all
+        flash[:alert] = "Artist not found"
+        redirect_to artists_path
       end
+    else
+      @songs = Song.all
     end
+  end
 
-# GET show with artist
-# returns valid song with no artist
-
-    def show
-      if params[:artist_id]
-        @song = @artist.songs.find_by(id: params[:id])
-        raise ArtistSongNotFound if @song.nil?
-      else
-        @song = Song.find_by(id: params[:id]) #redirects to artist song when artist song is not found 
-        raise SongNotFound if @song.nil?
-      end
+  def show
+    if Song.find_by(id: params[:id])
+      @song = Song.find(params[:id])
+    else
+      flash[:alert] = "Song not found"
+      redirect_to artist_songs_path(params[:artist_id])
     end
+  end
 
   def new
     @song = Song.new
